@@ -1,5 +1,6 @@
 package com.neuralfoundry.screenshare;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -45,6 +46,17 @@ public class CallPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+
+        findViewById(R.id.shareScreenButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(CallPageActivity.this, ScreenShareActivity.class);
+                //add params to intent
+                startActivity(intent);
+                HomePageActivity.engine.startPublishingStream("stream1");
             }
         });
     }

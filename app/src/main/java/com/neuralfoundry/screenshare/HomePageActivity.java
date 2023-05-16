@@ -23,7 +23,10 @@ import android.widget.Toast;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.callback.IZegoDestroyCompletionCallback;
+import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoScenario;
+import im.zego.zegoexpress.constants.ZegoVideoBufferType;
+import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
 
 public class HomePageActivity extends AppCompatActivity {
@@ -33,6 +36,7 @@ public class HomePageActivity extends AppCompatActivity {
     private long appID = 540138119;
     private String appSign = "91c90199f4b082ed4256079a0d0f5e8bbc3208c3ecf2a7cf03eb410fcc6184a3" ;
 
+    public static ZegoExpressEngine engine;
     void initViews(){
         setContentView(R.layout.activity_home_page);
         // Click to start a call.
@@ -64,6 +68,7 @@ public class HomePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         createEngine();
+        createVideoConfig();
         initViews();
     }
 
@@ -82,7 +87,18 @@ public class HomePageActivity extends AppCompatActivity {
         profile.appSign = appSign;
         profile.scenario = ZegoScenario.DEFAULT; // General scenario.
         profile.application = getApplication();
-        ZegoExpressEngine.createEngine(profile, null);
+        engine = ZegoExpressEngine.createEngine(profile, null);
+    }
+
+    void createVideoConfig() {
+//Monitor custom collection start and stop callback
+        VideoCaptureScreen videoCapture = new VideoCaptureScreen(ScreenShareActivity.mMediaProjection, 1080, 720, engine);
+        engine.setCustomVideoCaptureHandler(videoCapture);
+        ZegoCustomVideoCaptureConfig videoCaptureConfig=new ZegoCustomVideoCaptureConfig();
+//Use SurfaceTexture type for custom collection
+        videoCaptureConfig.bufferType=ZegoVideoBufferType.SURFACE_TEXTURE;
+//Start custom collection
+        engine.enableCustomVideoCapture(true, videoCaptureConfig, ZegoPublishChannel.MAIN);
     }
 
 
